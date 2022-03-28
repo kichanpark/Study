@@ -1,0 +1,3638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxine shutdown-port="9877" codebase-home="../modules" codebase-archive-home="../modules.archive">
+
+	<domain name="Jetty" description="Jetty Container">
+
+		<mbean name="JettyServer" class="com.arreo.sylphid.platform.jmx.jetty.JettyServer" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Port">
+				8081
+			</property>
+			<property name="ContextPath">
+				/
+			</property>
+			<property name="WebApplicationLocation">
+				../webapp
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="DataSources" description="DataSources">
+
+		<mbean name="MSGDB" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@119.207.74.11:1521:msgdb
+			</property>
+			<property name="Username">
+				mmsmt
+			</property>
+			<property name="Password">
+				arreo_mmsmt03
+			</property>
+		</mbean>
+
+		<mbean name="XDB" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@119.207.74.18:1521:xdb
+			</property>
+			<property name="Username">
+				sms
+			</property>
+			<property name="Password">
+				arreomagma
+			</property>
+		</mbean>
+
+		<mbean name="INFODB" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@218.233.240.43:1522:INFODB
+			</property>
+			<property name="Username">
+				arreomon
+			</property>
+			<property name="Password">
+				arreomon
+			</property>
+		</mbean>
+
+		<mbean name="INFODB2" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@218.233.240.43:1522:INFODB
+			</property>
+			<property name="Username">
+				smsmt
+			</property>
+			<property name="Password">
+				arreo_smsmt
+			</property>
+		</mbean>
+
+		<mbean name="SD2" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@//211.55.26.24:1521/sd2
+			</property>
+			<property name="Username">
+				arreo
+			</property>
+			<property name="Password">
+				arreo
+			</property>
+		</mbean>
+
+		<mbean name="APPSDB" class="com.arreo.sylphid.platform.jmx.jdbc.BasicDataSource">
+
+			<property name="DriverClassName">
+				oracle.jdbc.driver.OracleDriver
+			</property>
+			<property name="Url">
+				jdbc:oracle:thin:@218.233.240.43:1524:appsdb
+			</property>
+			<property name="Username">
+				mmsmt
+			</property>
+			<property name="Password">
+				arreo_mmsmt
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="Core" description="Sylphid Core Components">
+
+		<mbean name="ClientInfoDb" class="com.arreo.sylphid.mms.server.info.jmx.ClientInfoDatabase" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DataSourceName"> DataSources:name=XDB
+			</property>
+			<property name="UpdateInterval">
+				300
+			</property>
+		</mbean>
+
+		<mbean name="ClientByPassDb" class="com.arreo.sylphid.mms.server.info.jmx.ClientByPassDatabase" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DataSourceName"> DataSources:name=XDB
+			</property>
+		</mbean>
+
+		<mbean name="LimitThreshold" class="com.arreo.sylphid.mms.server.limit.jmx.LimitThreshold" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DataSourceName"> DataSources:name=INFODB2
+			</property>
+			<property name="GwId">
+				GW20
+			</property>
+		</mbean>
+
+		<mbean name="SpamFilter" class="com.arreo.sylphid.mms.server.spam.jmx.SpamFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="XdbDataSourceName"> DataSources:name=XDB
+			</property>
+			<property name="Sd2DataSourceName"> DataSources:name=APPSDB
+			</property>
+			<property name="KisaUpdateInterval">
+				86400
+			</property>
+			<property name="SpamClientUpdateInterval">
+				600
+			</property>
+		</mbean>
+
+		<mbean name="OilDatabase" class="com.arreo.sylphid.platform.jmx.OilDatabase" startup-operation="open" shutdown-operation="close">
+
+			<property name="Properties"> logStore.file=../data/sylphid.db
+			</property>
+		</mbean>
+
+		<mbean name="IoProcessor" class="net.gleamynode.netty2.IoProcessor" startup-operation="start" shutdown-operation="stop"/>
+
+		<mbean name="EventDispatcher" class="net.gleamynode.netty2.OrderedEventDispatcher" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ThreadPoolSize">
+				16
+			</property>
+		</mbean>
+
+		<mbean name="HeapShortageDetector" class="com.arreo.sylphid.platform.jmx.util.HeapShortageDetector">
+
+			<property name="UsageThreshold">
+				80
+			</property>
+			<property name="MinGarbageCollectionInterval">
+				60000
+			</property>
+		</mbean>
+
+		<mbean name="MonitorServer" class="com.arreo.sylphid.mms.server.monitor.jmx.MonitorServer" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DataSourceName"> DataSources:name=INFODB
+			</property>
+			<property name="StatusUrl">
+				http://119.207.74.20:8081/status
+			</property>
+			<property name="JettyPort">
+				8081
+			</property>
+			<property name="RouterTableName">
+				MONITOR_R_STATE_H
+			</property>
+			<property name="ModulesTableName">
+				MONITOR_M_STATE_H
+			</property>
+			<property name="GwName">
+				MMSGW 20
+			</property>
+			<property name="GwId">
+				GW20
+			</property>
+		</mbean>
+
+		<mbean name="DuplicationChecker" class="com.arreo.sylphid.platform.jmx.util.DuplicationChecker">
+
+			<property name="DatabaseName"> Core:name=OilDatabase
+			</property>
+			<property name="QueueName">
+				sylphid.duplication
+			</property>
+			<property name="IndexName">
+				sylphid.duplication
+			</property>
+			<property name="Capacity">
+				65536
+			</property>
+		</mbean>
+
+		<mbean name="RouterInstructor" class="com.arreo.sylphid.platform.jmx.instructor.JavaScriptRouterInstructor" startup-operation="reload">
+
+			<property name="InstructionPath">
+				../conf/router-instruction.js
+			</property>
+		</mbean>
+
+		<mbean name="Router" class="com.arreo.sylphid.platform.jmx.router.NIORouter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="IoProcessorName"> Core:name=IoProcessor
+			</property>
+			<property name="EventDispatcherName"> Core:name=EventDispatcher
+			</property>
+			<property name="DuplicationCheckerName"> Core:name=DuplicationChecker
+			</property>
+			<property name="HeapShortageDetectorName"> Core:name=HeapShortageDetector
+			</property>
+			<property name="Port">
+				9046
+			</property>
+			<property name="HostName">
+				119.207.74.20
+			</property>
+			<property name="DatabaseName"> Core:name=OilDatabase
+			</property>
+			<property name="InstructorName"> Core:name=RouterInstructor
+			</property>
+			<property name="DatabasePrefix">
+				sylphid
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="MMS" description="MMS service">
+
+		<mbean name="MMSDatabaseLogger1" class="com.arreo.sylphid.mms.server.logger.jmx.MMSDatabaseLogger" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="ReconnectDelay">
+				5
+			</property>
+			<property name="CommitInterval">
+				60
+			</property>
+			<property name="CommitThreshold">
+				1024
+			</property>
+			<property name="CommitSleepTime">
+				5000
+			</property>
+			<property name="LoggerId">
+				11
+			</property>
+			<property name="InsertThreadCount">
+				5
+			</property>
+			<property name="MaxInsert">
+				3
+			</property>
+			<property name="Name">
+				MMSDatabaseLogger1
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="MmsTableName">
+				MMS1_CMP_H
+			</property>
+			<property name="NoLoggingMsg"></property>
+		</mbean>
+
+		<mbean name="MMSReceiver" class="com.arreo.sylphid.mms.server.receiver.jmx.MMSReceiver" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DuplicationCheckerName"> Core:name=DuplicationChecker
+			</property>
+			<property name="ClientInfoDatabaseName"> Core:name=ClientInfoDb
+			</property>
+			<property name="ClientByPassDatabaseName"> Core:name=ClientByPassDb
+			</property>
+			<property name="SpamFilterName"> Core:name=SpamFilter
+			</property>
+			<property name="WorkerCount">
+				2
+			</property>
+			<property name="MmsDataDirectory">
+				/svc/mmsmt/MMSGW/mms_contents/rcv
+			</property>
+			<property name="Shreder">
+				true
+			</property>
+			<property name="Port">
+				10005
+			</property>
+			<property name="ConnectTimeout">
+				60
+			</property>
+			<property name="ServiceCodeCheckUse">
+				false
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="Name">
+				MMSReceiver
+			</property>
+			<property name="ReceiverId">
+				8
+			</property>
+		</mbean>
+
+		<mbean name="MMSKTFSender1" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> vasid=arreo_vasId,vaspId=arreomms,cpId=arreomms_01_001|arreomms_01_002|arreomms_01_003|arreomms_01_004|arreomms_01_005|arreomms_01_006|arreomms_01_012|arreomms_01_013|arreomms_01_014,cid=01025971376,version=1.0
+			</property>
+			<property name="Port">
+				14000
+			</property>
+			<property name="MaxMPM">
+				3000
+			</property>
+			<property name="ClientCount">
+				10
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.ktf.KTFMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.ktf.KTFCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				221.148.242.10
+			</property>
+			<property name="ServerPort">
+				15000
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ktf1/
+			</property>
+			<property name="SettleCode">
+				KTF1
+			</property>
+			<property name="ServiceProviderName">
+				KTF
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.KtfClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSKTFSender1
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="MMSKTFSender2" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> vasid=arreo_vasId,vaspId=arreomms,cpId=arreomms_02_001|arreomms_02_002|arreomms_02_003|arreomms_02_004|arreomms_02_005|arreomms_02_006|arreomms_02_012|arreomms_02_013,cid=01025971376,version=1.0
+			</property>
+			<property name="Port">
+				14001
+			</property>
+			<property name="MaxMPM">
+				3000
+			</property>
+			<property name="ClientCount">
+				10
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.ktf.KTFMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.ktf.KTFCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.246.105.50
+			</property>
+			<property name="ServerPort">
+				15000
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ktf2/
+			</property>
+			<property name="SettleCode">
+				KTF2
+			</property>
+			<property name="ServiceProviderName">
+				KTF
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.KtfClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSKTFSender2
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="MMSLGTSender13" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> vasId=B1_STDN07,vaspId=B1_STDN07,cid=01083025800,version=5.3.0
+			</property>
+			<property name="Port">
+				20120
+			</property>
+			<property name="MaxMPM">
+				120
+			</property>
+			<property name="ClientCount">
+				2
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.lgt.LGTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.lgt.LGTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="MaxIdleTime">
+				12
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				172.17.102.188
+			</property>
+			<property name="ServerPort">
+				8889
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/mms_contents/snd/lgt13/
+			</property>
+			<property name="SettleCode">
+				LGC1
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.LgtClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSLGTSender13
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSLGTSender14" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> vasId=B1_STDN08,vaspId=B1_STDN08,cid=01083025800,version=5.3.0
+			</property>
+			<property name="Port">
+				20121
+			</property>
+			<property name="MaxMPM">
+				120
+			</property>
+			<property name="ClientCount">
+				2
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.lgt.LGTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.lgt.LGTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="MaxIdleTime">
+				12
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				172.17.102.188
+			</property>
+			<property name="ServerPort">
+				8889
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/mms_contents/snd/lgt14/
+			</property>
+			<property name="SettleCode">
+				LGC2
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.LgtClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSLGTSender14
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender28" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528801081,vasId=01,vaspId=21,cid=1528801081,version=1.0
+			</property>
+			<property name="Port">
+				8901
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.44
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skts/
+			</property>
+			<property name="SettleCode">
+				SKTS
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender28
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender29" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528801082,vasId=01,vaspId=21,cid=1528801082,version=1.0
+			</property>
+			<property name="Port">
+				8902
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.44
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/sktt/
+			</property>
+			<property name="SettleCode">
+				SKTT
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender29
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender30" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528801083,vasId=01,vaspId=21,cid=1528801083,version=1.0
+			</property>
+			<property name="Port">
+				8903
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.44
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/sktu/
+			</property>
+			<property name="SettleCode">
+				SKTU
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender30
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender31" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528801084,vasId=01,vaspId=21,cid=1528801084,version=1.0
+			</property>
+			<property name="Port">
+				8904
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.44
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/sktv/
+			</property>
+			<property name="SettleCode">
+				SKTV
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender31
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender32" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528869551,vasId=01,vaspId=21,cid=1528869551,version=1.0
+			</property>
+			<property name="Port">
+				8905
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.45
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg1/
+			</property>
+			<property name="SettleCode">
+				SKG1
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender32
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender33" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528869555,vasId=01,vaspId=21,cid=1528869555,version=1.0
+			</property>
+			<property name="Port">
+				8906
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.45
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg2/
+			</property>
+			<property name="SettleCode">
+				SKG2
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender33
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender34" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528869560,vasId=01,vaspId=21,cid=1528869560,version=1.0
+			</property>
+			<property name="Port">
+				8907
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.45
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg3/
+			</property>
+			<property name="SettleCode">
+				SKG3
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender34
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender35" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528869565,vasId=01,vaspId=21,cid=1528869565,version=1.0
+			</property>
+			<property name="Port">
+				8908
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.197.45
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg4/
+			</property>
+			<property name="SettleCode">
+				SKG4
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender35
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender36" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528901867,vasId=01,vaspId=21,cid=1528901867,version=1.0
+			</property>
+			<property name="Port">
+				8909
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.208.11
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg5/
+			</property>
+			<property name="SettleCode">
+				SKG5
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender36
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender37" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528901870,vasId=01,vaspId=21,cid=1528901870,version=1.0
+			</property>
+			<property name="Port">
+				8910
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.208.11
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg6/
+			</property>
+			<property name="SettleCode">
+				SKG6
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender37
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender38" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528901883,vasId=01,vaspId=21,cid=1528901883,version=1.0
+			</property>
+			<property name="Port">
+				8911
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.208.11
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg7/
+			</property>
+			<property name="SettleCode">
+				SKG7
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender38
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender39" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528901868,vasId=01,vaspId=21,cid=1528901868,version=1.0
+			</property>
+			<property name="Port">
+				8912
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.208.11
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg8/
+			</property>
+			<property name="SettleCode">
+				SKG8
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender39
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="MMSSKTSender40" class="com.arreo.sylphid.mms.server.client.jmx.MMSSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="Properties"> bpId=1528901871,vasId=01,vaspId=21,cid=1528901871,version=1.0
+			</property>
+			<property name="Port">
+				8913
+			</property>
+			<property name="MaxMPM">
+				480
+			</property>
+			<property name="ClientCount">
+				1
+			</property>
+			<property name="MessageFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTMessageFactory
+			</property>
+			<property name="CodecFactory">
+				com.arreo.sylphid.mms.server.client.protocol.skt.SKTCodecFactory
+			</property>
+			<property name="ExpirationTimeout">
+				176400
+			</property>
+			<property name="MaxIdleTime">
+				60
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				211.188.208.11
+			</property>
+			<property name="ServerPort">
+				8080
+			</property>
+			<property name="IsFileWrite">
+				false
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/skg9/
+			</property>
+			<property name="SettleCode">
+				SKG9
+			</property>
+			<property name="ServiceProviderName">
+				SKT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ConnectionTimeout">
+				60000
+			</property>
+			<property name="ClientSessionClass">
+				com.arreo.sylphid.mms.server.client.SKTClientSession
+			</property>
+			<property name="ServiceDeniedRetryCount">
+				3
+			</property>
+			<property name="ServiceDeniedRetryInterval">
+				60
+			</property>
+			<property name="PrioritySubmitRate">
+				7
+			</property>
+			<property name="NormalSubmitRate">
+				4
+			</property>
+			<property name="TimeLimit"></property>
+			<property name="Name">
+				MMSSKTSender40
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="LgAgentSender" class="com.arreo.sylphid.mms.server.client.lg.jmx.LgAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/lguplus-agent/contents/
+			</property>
+			<property name="SettleCode">
+				LGTQ
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				LgAgentSender
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="LgAgentTableName">
+				MMS_SEND17
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+
+		<mbean name="LgAgentSender2" class="com.arreo.sylphid.mms.server.client.lg.jmx.LgAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/lguplus-agent2/contents/
+			</property>
+			<property name="SettleCode">
+				LGTR
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				LgAgentSender2
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="LgAgentTableName">
+				MMS_SEND18
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+
+		<mbean name="LgAgentSender3" class="com.arreo.sylphid.mms.server.client.lg.jmx.LgAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/lguplus-agent3/contents/
+			</property>
+			<property name="SettleCode">
+				LGTS
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				LgAgentSender3
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="LgAgentTableName">
+				MMS_SEND19
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+
+		<mbean name="KsbAgentSender17" class="com.arreo.sylphid.mms.server.client.ksb.jmx.KsbAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ksbh/
+			</property>
+			<property name="SettleCode">
+				KSBH
+			</property>
+			<property name="ServiceProviderName">
+				KSB
+			</property>
+			<property name="Name">
+				KsbAgentSender17
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="KsbAgentTableName">
+				kb_mms17
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+
+		<mbean name="KsbAgentSender18" class="com.arreo.sylphid.mms.server.client.ksb.jmx.KsbAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ksbi/
+			</property>
+			<property name="SettleCode">
+				KSBI
+			</property>
+			<property name="ServiceProviderName">
+				KSB
+			</property>
+			<property name="Name">
+				KsbAgentSender18
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="KsbAgentTableName">
+				kb_mms18
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+
+		<mbean name="KsbAgentSender19" class="com.arreo.sylphid.mms.server.client.ksb.jmx.KsbAgentSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				86400
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ksbj/
+			</property>
+			<property name="SettleCode">
+				KSBJ
+			</property>
+			<property name="ServiceProviderName">
+				KSB
+			</property>
+			<property name="Name">
+				KsbAgentSender19
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="DataSourceName"> DataSources:name=MSGDB
+			</property>
+			<property name="KsbAgentTableName">
+				kb_mms19
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+		</mbean>
+		<!--
+		<mbean name="WiseCanSender7" class="com.arreo.sylphid.mms.server.client.wisecan.jmx.WiseCanSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/wsc7/
+			</property>
+			<property name="SettleCode">
+				WSC7
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				WiseCanSender7
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="ServerIp">
+				58.229.183.253
+			</property>
+			<property name="ServerPort">
+				8100
+			</property>
+			<property name="UserId">
+				stdnet07
+			</property>
+			<property name="UserPwd">
+				!stdnet07@
+			</property>
+			<property name="Encode">
+				0
+			</property>
+			<property name="Version">
+				Linux1.0
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="WiseCanSender8" class="com.arreo.sylphid.mms.server.client.wisecan.jmx.WiseCanSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/wsc8/
+			</property>
+			<property name="SettleCode">
+				WSC8
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				WiseCanSender8
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="ServerIp">
+				58.229.183.252
+			</property>
+			<property name="ServerPort">
+				8100
+			</property>
+			<property name="UserId">
+				stdnet08
+			</property>
+			<property name="UserPwd">
+				!stdnet08@
+			</property>
+			<property name="Encode">
+				0
+			</property>
+			<property name="Version">
+				Linux1.0
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+		-->
+		<mbean name="IheartSender10" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihta/
+			</property>
+			<property name="SettleCode">
+				IHTA
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartSender10
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				stdgw20_1
+			</property>
+			<property name="UserPwd">
+				!StdCokr20
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="IheartSender11" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihtb/
+			</property>
+			<property name="SettleCode">
+				IHTB
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartSender11
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				stdgw20_2
+			</property>
+			<property name="UserPwd">
+				!StdCokr20
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="IheartSender12" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihtc/
+			</property>
+			<property name="SettleCode">
+				IHTC
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartSender12
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				stdgw20_3
+			</property>
+			<property name="UserPwd">
+				!StdCokr20
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="IheartLowSender09" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihla/
+			</property>
+			<property name="SettleCode">
+				IHLA
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartLowSender09
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				mmsgw20_01_l
+			</property>
+			<property name="UserPwd">
+				1!Std.Co.kr
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="IheartLowSender10" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihlb/
+			</property>
+			<property name="SettleCode">
+				IHLB
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartLowSender10
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				mmsgw20_02_l
+			</property>
+			<property name="UserPwd">
+				1!Std.Co.kr
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="IheartLowSender11" class="com.arreo.sylphid.mms.server.client.iheart.jmx.IheartSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				10
+			</property>
+			<property name="FilePath">
+				/svc/mmsmt/MMSGW/mms_contents/snd/ihlc/
+			</property>
+			<property name="SettleCode">
+				IHLC
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="Name">
+				IheartLowSender11
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="IsFileWrite">
+				true
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ServerIp">
+				211.239.159.201
+			</property>
+			<property name="ServerPort">
+				4000
+			</property>
+			<property name="UserId">
+				mmsgw20_03_l
+			</property>
+			<property name="UserPwd">
+				1!Std.Co.kr
+			</property>
+			<property name="Version">
+				SMGP/2.0.5
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="DelayTime">
+				5
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="NanoItNGSender9" class="com.arreo.sylphid.mms.server.client.nanoitv2.jmx.NanoItNGSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerUrl">
+				http://dist.funsms.kr
+			</property>
+			<property name="SettleCode">
+				NIT9
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				stdagent009
+			</property>
+			<property name="UserPwd">
+				hqyAzQz9g0QXacr
+			</property>
+			<property name="EncryptionKey">
+				NQrx73htGq1VaWQh7RDY4MBha7W7V
+			</property>
+			<property name="Name">
+				NanoItNGSender9
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="NanoItNGSender10" class="com.arreo.sylphid.mms.server.client.nanoitv2.jmx.NanoItNGSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerUrl">
+				http://dist.funsms.kr
+			</property>
+			<property name="SettleCode">
+				NITA
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				stdagent010
+			</property>
+			<property name="UserPwd">
+				D4hZ189oj0
+			</property>
+			<property name="EncryptionKey">
+				nGKLYCrlOnZ6cYvsmbS3hW5GA
+			</property>
+			<property name="Name">
+				NanoItNGSender10
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="NanoItNGSender11" class="com.arreo.sylphid.mms.server.client.nanoitv2.jmx.NanoItNGSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerUrl">
+				http://dist.funsms.kr
+			</property>
+			<property name="SettleCode">
+				NITB
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				2
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				stdagent011
+			</property>
+			<property name="UserPwd">
+				eXA91Bs7u4
+			</property>
+			<property name="EncryptionKey">
+				6oqWZ2IVV5Lfd0ppEy7xJGL6
+			</property>
+			<property name="Name">
+				NanoItNGSender11
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+		</mbean>
+
+		<mbean name="UnionmcSender13" class="com.arreo.sylphid.mms.server.client.unionmc.jmx.UnionmcSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				220.85.11.83
+			</property>
+			<property name="ServerPort">
+				4403
+			</property>
+			<property name="SettleCode">
+				UMCD
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				1
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				arreo13
+			</property>
+			<property name="UserPwd">
+				arreo13!@#
+			</property>
+			<property name="ServerRptIp">
+				220.85.11.83
+			</property>
+			<property name="ServerRptPort">
+				4404
+			</property>
+			<property name="ProtocolVer">
+				P_1.0.6
+			</property>
+			<property name="Name">
+				UnionmcSender13
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="UnionmcSender14" class="com.arreo.sylphid.mms.server.client.unionmc.jmx.UnionmcSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				220.85.11.83
+			</property>
+			<property name="ServerPort">
+				4403
+			</property>
+			<property name="SettleCode">
+				UMCE
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				1
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				arreo14
+			</property>
+			<property name="UserPwd">
+				arreo14!@#
+			</property>
+			<property name="ServerRptIp">
+				220.85.11.83
+			</property>
+			<property name="ServerRptPort">
+				4404
+			</property>
+			<property name="ProtocolVer">
+				P_1.0.6
+			</property>
+			<property name="Name">
+				UnionmcSender14
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="UnionmcSender15" class="com.arreo.sylphid.mms.server.client.unionmc.jmx.UnionmcSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				220.85.11.83
+			</property>
+			<property name="ServerPort">
+				4403
+			</property>
+			<property name="SettleCode">
+				UMCF
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				1
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				arreo15
+			</property>
+			<property name="UserPwd">
+				arreo15!@#
+			</property>
+			<property name="ServerRptIp">
+				220.85.11.83
+			</property>
+			<property name="ServerRptPort">
+				4404
+			</property>
+			<property name="ProtocolVer">
+				P_1.0.6
+			</property>
+			<property name="Name">
+				UnionmcSender15
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="UnionmcSender16" class="com.arreo.sylphid.mms.server.client.unionmc.jmx.UnionmcSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+				262800
+			</property>
+			<property name="SubmissionTimeout">
+				300
+			</property>
+			<property name="ServerIp">
+				220.85.11.83
+			</property>
+			<property name="ServerPort">
+				4403
+			</property>
+			<property name="SettleCode">
+				UMCG
+			</property>
+			<property name="ServiceProviderName">
+				LGT
+			</property>
+			<property name="MaxRetries">
+				1
+			</property>
+			<property name="OverseaGrpcd">
+				B002002
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="UserId">
+				arreo16
+			</property>
+			<property name="UserPwd">
+				arreo16!@#
+			</property>
+			<property name="ServerRptIp">
+				220.85.11.83
+			</property>
+			<property name="ServerRptPort">
+				4404
+			</property>
+			<property name="ProtocolVer">
+				P_1.0.6
+			</property>
+			<property name="Name">
+				UnionmcSender16
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender13" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hisd/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISD
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard13
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender13
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender14" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hise/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISE
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard14
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender14
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender15" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hisf/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISF
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard15
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender15
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender16" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hisg/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISG
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard16
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender16
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender17" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hish/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISH
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard17
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender17
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender18" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hisi/
+			</property>
+			<property name="ServerIp">
+                220.85.11.96
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HISI
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard18
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.96
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender18
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+		
+		<mbean name="HistSender1" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic1/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC1
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard25
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender1
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender2" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic2/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC2
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard26
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender2
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender3" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic3/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC3
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard27
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender3
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender4" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic4/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC4
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard28
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender4
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender5" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic5/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC5
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard29
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender5
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="HistSender6" class="com.arreo.sylphid.mms.server.client.hist.jmx.HistSender" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ExpirationTimeout">
+                262800
+			</property>
+			<property name="SubmissionTimeout">
+                300
+			</property>
+			<property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/hic6/
+			</property>
+			<property name="ServerIp">
+                220.85.11.95
+			</property>
+			<property name="ServerPort">
+                4403
+			</property>
+			<property name="SettleCode">
+                HIC6
+			</property>
+			<property name="ServiceProviderName">
+                LGT
+			</property>
+			<property name="MaxRetries">
+                1
+			</property>
+			<property name="OverseaGrpcd">
+                B002002
+			</property>
+			<property name="ByPassHtml">
+                F
+			</property>
+			<property name="UserId">
+                standard30
+			</property>
+			<property name="UserPwd">
+                Standard12#$
+			</property>
+			<property name="ServerRptIp">
+                220.85.11.95
+			</property>
+			<property name="ServerRptPort">
+                4404
+			</property>
+			<property name="ProtocolVer">
+                P_1.0.7
+			</property>
+			<property name="Name">
+                HistSender6
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+		
+		<mbean name="LghvSender5" class="com.arreo.sylphid.mms.server.client.lghv.jmx.LghvSender" startup-operation="start" shutdown-operation="stop">
+
+            <property name="ExpirationTimeout">
+                262800
+            </property>
+            <property name="SubmissionTimeout">
+                300
+            </property>
+            <property name="GrantServerUrl">
+                
+            </property>			
+			<property name="GrantServerPwd">
+
+            </property>
+            <property name="StaticSndServerIp">
+                36.38.27.7
+            </property>
+            <property name="StaticSndServerPort">
+                5001
+            </property>
+			<property name="StaticRptServerIp">
+                36.38.27.7
+            </property>
+            <property name="StaticRptServerPort">
+                 5001
+            </property>
+            <property name="SettleCode">
+                LHV5
+            </property>
+            <property name="ServiceProviderName">
+                LGT
+            </property>
+            <property name="MaxRetries">
+                1
+            </property>
+            <property name="OverseaGrpcd">
+                B002002
+            </property>
+            <property name="ByPassHtml">
+                F
+            </property>
+            <property name="UserId">
+                arreo20gw
+            </property>
+            <property name="UserPwd">
+                Ra5IGeVoZ7WW3QlEkONSpx==
+            </property>
+			<property name="ServiceId">
+                M1
+            </property>
+            <property name="ProtocolVer">
+                v1.0.4
+            </property>
+            <property name="Name">
+                LghvSender5
+            </property>
+            <property name="RouterName">
+                Core:name=Router
+            </property>
+        </mbean>
+		
+		<mbean name="LghvSender6" class="com.arreo.sylphid.mms.server.client.lghv.jmx.LghvSender" startup-operation="start" shutdown-operation="stop">
+
+            <property name="ExpirationTimeout">
+                262800
+            </property>
+            <property name="SubmissionTimeout">
+                300
+            </property>
+            <property name="GrantServerUrl">
+                
+            </property>			
+			<property name="GrantServerPwd">
+
+            </property>
+            <property name="StaticSndServerIp">
+                36.38.27.8
+            </property>
+            <property name="StaticSndServerPort">
+                5001
+            </property>
+			<property name="StaticRptServerIp">
+                36.38.27.8
+            </property>
+            <property name="StaticRptServerPort">
+                 5001
+            </property>
+            <property name="SettleCode">
+                LHV6
+            </property>
+            <property name="ServiceProviderName">
+                LGT
+            </property>
+            <property name="MaxRetries">
+                1
+            </property>
+            <property name="OverseaGrpcd">
+                B002002
+            </property>
+            <property name="ByPassHtml">
+                F
+            </property>
+            <property name="UserId">
+                arreo20gw
+            </property>
+            <property name="UserPwd">
+                Ra5IGeVoZ7WW3QlEkONSpx==
+            </property>
+			<property name="ServiceId">
+                M2
+            </property>
+            <property name="ProtocolVer">
+                v1.0.4
+            </property>
+            <property name="Name">
+                LghvSender6
+            </property>
+            <property name="RouterName">
+                Core:name=Router
+            </property>
+        </mbean>
+
+        <mbean name="SmtntSender5" class="com.arreo.sylphid.mms.server.client.smtnt.jmx.SmtntSender" startup-operation="start" shutdown-operation="stop">
+
+            <property name="ExpirationTimeout">
+                262800
+            </property>
+            <property name="SubmissionTimeout">
+                300
+            </property>
+            <property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/stt5/
+            </property>
+            <property name="ServerIp">
+                125.131.121.67
+            </property>
+            <property name="ServerPort">
+                3005
+            </property>
+            <property name="SettleCode">
+                STT5
+            </property>
+            <property name="ServiceProviderName">
+                LGT
+            </property>
+            <property name="MaxRetries">
+                1
+            </property>
+            <property name="OverseaGrpcd">
+                B002002
+            </property>
+            <property name="ByPassHtml">
+                F
+            </property>
+            <property name="UserId">
+                standardnw_003
+            </property>
+            <property name="UserPwd">
+                dard@$#$stan!$~tp
+            </property>
+            <property name="ServerRptIp">
+                125.131.121.67
+            </property>
+            <property name="ServerRptPort">
+                3006
+            </property>
+            <property name="ProtocolVer">
+                1
+            </property>
+            <property name="Name">
+                SmtntSender5
+            </property>
+            <property name="RouterName">
+                Core:name=Router
+            </property>
+        </mbean>
+
+        <mbean name="SmtntSender6" class="com.arreo.sylphid.mms.server.client.smtnt.jmx.SmtntSender" startup-operation="start" shutdown-operation="stop">
+
+            <property name="ExpirationTimeout">
+                262800
+            </property>
+            <property name="SubmissionTimeout">
+                300
+            </property>
+            <property name="FilePath">
+                /svc/mmsmt/MMSGW/mms_contents/snd/stt6/
+            </property>
+            <property name="ServerIp">
+                125.131.121.66
+            </property>
+            <property name="ServerPort">
+                3005
+            </property>
+            <property name="SettleCode">
+                STT6
+            </property>
+            <property name="ServiceProviderName">
+                LGT
+            </property>
+            <property name="MaxRetries">
+                1
+            </property>
+            <property name="OverseaGrpcd">
+                B002002
+            </property>
+            <property name="ByPassHtml">
+                F
+            </property>
+            <property name="UserId">
+                standardnw_006
+            </property>
+            <property name="UserPwd">
+                dard@$#$stan!$~tp
+            </property>
+            <property name="ServerRptIp">
+                125.131.121.66
+            </property>
+            <property name="ServerRptPort">
+                3006
+            </property>
+            <property name="ProtocolVer">
+                1
+            </property>
+            <property name="Name">
+                SmtntSender6
+            </property>
+            <property name="RouterName">
+                Core:name=Router
+            </property>
+        </mbean>
+		
+		<mbean name="Dropper" class="com.arreo.sylphid.platform.jmx.util.MessageDropper" startup-operation="start" shutdown-operation="stop">
+
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="Name">
+				Dropper
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="PNX" description="Ported Number Exchanger">
+
+		<mbean name="MultiPNXFilter" class="com.arreo.sylphid.mms.server.blockingPnx.jmx.MultiPNXFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ConnectTimeout">
+				5000
+			</property>
+			<property name="ReconnectDelay">
+				3000
+			</property>
+			<property name="MsgGb">
+				A
+			</property>
+			<property name="QueryTimeout">
+				5000
+			</property>
+			<property name="ChkGb">
+				A
+			</property>
+			<property name="ConnectInfoList">
+				119.207.74.13:27001;119.207.74.13:27002;119.207.74.13:27003;119.207.74.13:27004
+			</property>
+			<property name="Name">
+				MultiPNXFilter
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+			<property name="ByPassHtml">
+				F
+			</property>
+			<property name="LimitThresholdName"> Core:name=LimitThreshold
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="SPAM" description="KISA Spam Person">
+
+		<mbean name="SpamPersonFilter" class="com.arreo.sylphid.mms.server.spam.jmx.SpamPersonFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ConnectTimeout">
+				5000
+			</property>
+			<property name="ReconnectDelay">
+				3000
+			</property>
+			<property name="QueryTimeout">
+				5000
+			</property>
+			<property name="ConnectInfoList">
+				119.207.74.20:8001;119.207.74.20:8002
+			</property>
+			<property name="SpamPersonUse">
+				true
+			</property>
+			<property name="Name">
+				SpamPersonFilter
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="SpamPersonFilter2" class="com.arreo.sylphid.mms.server.spam.jmx.SpamPersonFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ConnectTimeout">
+				5000
+			</property>
+			<property name="ReconnectDelay">
+				3000
+			</property>
+			<property name="QueryTimeout">
+				5000
+			</property>
+			<property name="ConnectInfoList">
+				119.207.74.20:8002;119.207.74.20:8001
+			</property>
+			<property name="SpamPersonUse">
+				true
+			</property>
+			<property name="Name">
+				SpamPersonFilter2
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="SpamPersonFilter3" class="com.arreo.sylphid.mms.server.spam.jmx.SpamPersonFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ConnectTimeout">
+				5000
+			</property>
+			<property name="ReconnectDelay">
+				3000
+			</property>
+			<property name="QueryTimeout">
+				5000
+			</property>
+			<property name="ConnectInfoList">
+				119.207.74.20:8001;119.207.74.20:8002
+			</property>
+			<property name="SpamPersonUse">
+				true
+			</property>
+			<property name="Name">
+				SpamPersonFilter3
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+
+		<mbean name="SpamPersonFilter4" class="com.arreo.sylphid.mms.server.spam.jmx.SpamPersonFilter" startup-operation="start" shutdown-operation="stop">
+
+			<property name="ConnectTimeout">
+				5000
+			</property>
+			<property name="ReconnectDelay">
+				3000
+			</property>
+			<property name="QueryTimeout">
+				5000
+			</property>
+			<property name="ConnectInfoList">
+				119.207.74.20:8002;119.207.74.20:8001
+			</property>
+			<property name="SpamPersonUse">
+				true
+			</property>
+			<property name="Name">
+				SpamPersonFilter4
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+	</domain>
+
+	<domain name="Scheduler" description="scheduler list">
+
+		<mbean name="OilDefragmentor" class="com.arreo.sylphid.platform.schedule.oil.jmx.OilDefragmentor" startup-operation="start" shutdown-operation="stop">
+
+			<property name="DefrageTime">
+				1800
+			</property>
+			<property name="Name">
+				OilDefragmentor
+			</property>
+			<property name="RouterName"> Core:name=Router
+			</property>
+		</mbean>
+	</domain>
+</maxine>
